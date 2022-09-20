@@ -110,3 +110,6 @@ plt.figure()
 plt.scatter(a_price[:, 0], a_price[:, 1])
 plt.show()
 
+# list comprehension
+l_uj = [x*2 for x in range(5)]
+print(l_uj)
