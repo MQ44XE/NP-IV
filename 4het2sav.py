@@ -22,6 +22,15 @@ df_prop = pd.read_csv("property data.csv")
 # df_prop["ST_NAME"] == "BERKELEY"
 # df_prop.loc[df_prop["ST_NAME"] == "BERKELEY"]
 
+# msk1 = df_prop[["ST_NAME"] == "BERKELEY"]
+# print(df_prop.loc[msk1])
+# msk2 = df_prop[['ST_NAME'] == 'BERKELEY', 'ST_NAME']
+# print(df_prop.loc[msk2])
+# msk3 = df_prop['ST_NAME'].isin(['BERKELEY', 'LEXINGTON'])
+# print(df_prop.loc[msk3])
+# msk4 = (df_prop['ST_NUM'] < 200) & (df_prop['ST_NAME'] == "LEXINGTON")
+# print(df_prop.loc[msk4])
+# msk5 = df_prop["ST_NUM"].notnull()
 # print(df_prop.loc[msk5])
 
 # df_prop = df_prop.fillna("UNKNOWN")
@@ -31,11 +40,11 @@ df_prop = pd.read_csv("property data.csv")
 # df_prop = df_prop.fillna("UNKNOWN")
 # print(df_prop)
 
-df_voo["effective_return"] = df_voo["Adj Close"] / df_voo["Adj Close"].shift(1) - 1
-print(df_voo)
-df_voo["log_return"] = np.log(df_voo["Adj Close"] / df_voo["Adj Close"].shift(1))
-print(df_voo)
-df_voo["cumsum_log_return"] = df_voo["log_return"].cumsum()
-print(df_voo)
-# Adj Close utolsó értékének meg kell egyezni az alábbi képlet eredményével
-print(df_voo.loc[0, "Adj Close"] * np.exp(df_voo.iloc[-1]["cumsum_log_return"]))
+# df_voo["effective_return"] = df_voo["Adj Close"] / df_voo["Adj Close"].shift(1) - 1
+# print(df_voo)
+# df_voo["log_return"] = np.log(df_voo["Adj Close"] / df_voo["Adj Close"].shift(1))
+# print(df_voo)
+# df_voo["cumsum_log_return"] = df_voo["log_return"].cumsum()
+# print(df_voo)
+# # Adj Close utolsó értékének meg kell egyezni az alábbi képlet eredményével
+# print(df_voo.loc[0, "Adj Close"] * np.exp(df_voo.iloc[-1]["cumsum_log_return"]))
