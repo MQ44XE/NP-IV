@@ -7,7 +7,7 @@ from np6het2sav import Option
 opt = Option("C", 100, "20221215", 1)
 print(opt.calcPayoff(139))
 
-K = 100
+K = 500
 expiry = "20221215"
 C = Option("C", K, expiry, 1)
 P = Option("P", K, expiry, -1)
