@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 
 df1 = pd.DataFrame()
 df2 = pd.DataFrame(columns=["n", "Fib"])
@@ -36,9 +37,16 @@ class VelSzamok():
         self.n_cols = n_cols
         self.value= np.random.random((self.n_rows, self.n_cols))
 
+    def plot_column_averages(self):
+        averages = self.value.mean(axis=0)
+        print(averages)
+        plt.plot(averages)
+        plt.show()
         pass
 
-a = VelSzamok(5, 2)
-print(a.value)
+a1 = VelSzamok(5, 2)
+a2 = VelSzamok(6, 3)
+print(a2.value)
+a2.plot_column_averages()
 
 
