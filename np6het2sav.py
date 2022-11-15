@@ -70,9 +70,10 @@ class Option:
     def calcVola(self, S: float, time: float, price, rate=0):
         # calcs implied vola from market price
         vola_hi = 0.4
+        vola_low = 0
         while self.calcPrice(S, vola_hi, time, rate) < price:
+            vola_low = vola_hi
             vola_hi *= 2
-        vola_low = vola_hi / 2
         while abs(vola_hi - vola_low) > 0.0001:
             vola = 0.5 * (vola_low + vola_hi)
             price_updated = self.calcPrice(S, time, vola, rate)
@@ -80,6 +81,7 @@ class Option:
                 vola_low = vola
             else:
                 vola_hi = vola
+        return vola
 
 
 
