@@ -25,8 +25,9 @@ print(df)
 
 df.index = pd.to_datetime(df["Date"])
 df_risk_free = get_daily_risk_free_rate()
-df_joined = df.join(df_risk_free)
-df["ret_log_daily_exc"] = df["ret_log_daily"] - df["risk_free_daily"]
+df = df.join(df_risk_free)
+df = df.dropna()
+df['ret_log_daily_exc'] = df['ret_log_daily'] - df['risk_free_daily']
 df["ret_log_daily"].plot()
 plt.show()
 
@@ -39,15 +40,19 @@ t_day_in_year = 252
 vol_windows_in_y = [0.25, 1, 3, 10]
 cols_vol, cols_ret, cols_beta = [], [], []
 for year in vol_windows_in_y:
-    col_vol = "vol_" + str(year) + "y"
-    col_ret = "ret_yearly_" + str(year) + "y"
-    col_ret = "ret_yearly_" + str(year) + "y"
-
+    col_vol = 'vol_' + str(year) + 'y'
+    col_ret = 'ret_yearly_' + str(year) + 'y'
+    col_beta = 'beta_yearly_' + str(year) + 'y'
     cols_vol.append(col_vol)
     cols_ret.append(col_ret)
-    df[col_vol] = np.sqrt(t_day_in_year) * df["ret_log_daily"].rolling(int(year * t_day_in_year)).std()
-    df[col_ret] = t_day_in_year * df["ret_log_daily"].rolling(int(year * t_day_in_year)).mean()
-df["ret_log_daily"].plot()
-df["cols_vol"].plot()
+    cols_beta.append(col_beta)
+
+    df[col_vol] = np.sqrt(t_day_in_year) * df['ret_log_daily_exc'].rolling(int(year * t_day_in_year)).std()
+    df[col_ret] = t_day_in_year * df['ret_log_daily_exc'].rolling(int(year * t_day_in_year)).mean()
+    df[col_beta] = df[col_ret] / df[col_vol]
+df['ret_log_daily_exc'].plot()
+df[cols_vol].plot()
+df[['ret_log_daily', 'vol_1y', 'beta_yearly_1y', 'ret_yearly_1y']].plot()
 plt.show()
+print(1)
 
