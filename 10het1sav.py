@@ -92,20 +92,41 @@ for i in range(grid.shape[0]):
     ret, std = calc_nasset_mean_std(grid[i], mean_asset, cov_asset)
     nsasset_mean_std.append((ret, std))
 
-nsasset_mean_std_df = pd.DataFrame(nsasset_mean_std)
-nsasset_mean_std_df.columns = ["Portfolio Return", "Portfolio Std.Dev."]
-nsasset_mean_std_df.plot.scatter(x="Portfolio Std.Dev.", y="Portfolio Return")
-plt.show()
+# nsasset_mean_std_df = pd.DataFrame(nsasset_mean_std)
+# nsasset_mean_std_df.columns = ["Portfolio Return", "Portfolio Std.Dev."]
+# nsasset_mean_std_df.plot.scatter(x="Portfolio Std.Dev.", y="Portfolio Return")
+# plt.show()
 
 # 4. Optimalizáció
 # - Std Dev minimalizálása adott hozamszint mellett
 # - constraintek megadása
 
-return_target = 0.2
-cons = ({"type": "eq", "fun": lambda weight: return_target - calc_nasset_mean(weight, mean_asset)},
-        {"type": "eq", "fun": lambda weight: np.sum(weight)-1})
-# eq = equality, fun = function
+eff_frontier = {}
 
-sp.optimize.minimize(calc_nasset_std, np.array([1, 0, 0, 0, 0]), args = (cov_asset), constraints=cons)
+for return_target in np.linspace(0.01, 0.2, 100):
+    cons = ({"type": "eq", "fun": lambda weight: return_target - calc_nasset_mean(weight, mean_asset)},
+        {"type": "eq", "fun": lambda weight: np.sum(weight)-1},
+        {"type": "ineq", "fun": lambda weight: np.max(weight)-0.8})
+    # eq = equality, fun = function
+
+    bounds = []
+    # No short position - all the weights are positive
+    for i in range(mean_asset.shape[0]):
+        bounds.append((0, None)) #ha szeretnénk felső korlátot a None-t lehet átírni pl 0.8-ra
+
+    res = sp.optimize.minimize(calc_nasset_std, np.array([1, 0, 0, 0, 0]), args=(cov_asset), constraints=cons, bounds=bounds)
+
+    eredmeny = res.x
+    # 91%-ban fektet az egyikbe, 85%-ban egy másikba a többibe közel 0%-ban
+    if res.success:
+        eff_frontier[return_target] = res.x
+
+eff_frontier_df = pd.DataFrame(eff_frontier).transpose()
+eff_frontier_df["Std. Dev."] = eff_frontier_df.apply(lambda x: calc_nasset_std(np.array(x), cov_asset), axis=1)
+eff_frontier_df.reset_index(inplace=True)
+eff_frontier_df.plot(x="Std. Dev.", y= "index")
+
+plt.show()
+print(np.sum(res.x)) #1 az eredmény
 
 pass
